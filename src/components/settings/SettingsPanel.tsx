@@ -58,19 +58,44 @@ function TimerSettings() {
             >
               카운트다운
             </button>
+            <button
+              className={timer.mode === 'clock' ? 'active' : ''}
+              onClick={() => setTimer({ mode: 'clock' })}
+            >
+              현재시간
+            </button>
           </div>
           {timer.mode === 'down' && (
             <div className="row">
-              <span>시간(분)</span>
-              <input
-                className="num-input"
-                type="number"
-                min={1}
-                value={timer.minutes}
-                onChange={(e) =>
-                  setTimer({ minutes: Math.max(1, Number(e.target.value) || 1) })
-                }
-              />
+              <span>시간</span>
+              <div className="time-inputs">
+                <input
+                  className="num-input"
+                  type="number"
+                  min={0}
+                  value={timer.minutes}
+                  onChange={(e) =>
+                    setTimer({ minutes: Math.max(0, Math.floor(Number(e.target.value)) || 0) })
+                  }
+                />
+                <span className="time-unit">분</span>
+                <input
+                  className="num-input"
+                  type="number"
+                  min={0}
+                  max={59}
+                  value={timer.seconds ?? 0}
+                  onChange={(e) =>
+                    setTimer({
+                      seconds: Math.min(
+                        59,
+                        Math.max(0, Math.floor(Number(e.target.value)) || 0)
+                      ),
+                    })
+                  }
+                />
+                <span className="time-unit">초</span>
+              </div>
             </div>
           )}
         </>
@@ -111,6 +136,31 @@ function BaseballSettings() {
   )
 }
 
+function ThemeSettings() {
+  const theme = useSettingsStore((s) => s.theme)
+  const setTheme = useSettingsStore((s) => s.setTheme)
+
+  return (
+    <div className="settings-card">
+      <h3>테마</h3>
+      <div className="seg">
+        <button
+          className={theme === 'dark' ? 'active' : ''}
+          onClick={() => setTheme('dark')}
+        >
+          🌙 다크
+        </button>
+        <button
+          className={theme === 'light' ? 'active' : ''}
+          onClick={() => setTheme('light')}
+        >
+          ☀️ 화이트
+        </button>
+      </div>
+    </div>
+  )
+}
+
 export function SettingsPanel() {
   const resetGeneral = useGeneralStore((s) => s.reset)
   const resetBaseball = useBaseballStore((s) => s.reset)
@@ -129,6 +179,7 @@ export function SettingsPanel() {
         <TeamSettings team="b" />
         <TimerSettings />
         <BaseballSettings />
+        <ThemeSettings />
       </div>
       <div className="settings-card">
         <h3>점수</h3>

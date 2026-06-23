@@ -21,7 +21,6 @@ import { RecordTable } from './RecordTable'
 function TeamHalf({ team, side }: { team: Team; side: 'left' | 'right' }) {
   const score = useBaseballStore((s) => s.scores[team])
   const floor = useBaseballStore((s) => s.halfStart[team])
-  const phase = useBaseballStore((s) => s.phase)
   const inc = useBaseballStore((s) => s.inc)
   const dec = useBaseballStore((s) => s.dec)
   const isAttacker = useBaseballStore(
@@ -29,7 +28,6 @@ function TeamHalf({ team, side }: { team: Team; side: 'left' | 'right' }) {
   )
   const color = useSettingsStore((s) => (team === 'a' ? s.teamA.color : s.teamB.color))
   const name = useSettingsStore((s) => s.teamName(team))
-  const playing = phase === 'playing'
 
   return (
     <div
@@ -45,16 +43,7 @@ function TeamHalf({ team, side }: { team: Team; side: 'left' | 'right' }) {
       role="button"
       aria-label={`${name} 득점`}
     >
-      {/* 수비팀: S·B·F 카운트를 이름 위에 */}
-      {playing && !isAttacker && (
-        <CountControl keys={['s', 'b', 'f']} className="bb-counts-defender" />
-      )}
       <div className="team-name">{name}</div>
-      <div className="bb-role">{isAttacker ? '공격' : '수비'}</div>
-      {/* 공격팀: 아웃 카운트를 점수 위에 */}
-      {playing && isAttacker && (
-        <CountControl keys={['o']} className="bb-counts-out" />
-      )}
       <div className="team-score">{score}</div>
       {isAttacker && (
         <button
@@ -74,51 +63,35 @@ function TeamHalf({ team, side }: { team: Team; side: 'left' | 'right' }) {
   )
 }
 
-function CountButton({
-  label,
-  count,
-  max,
-  color,
-  numeric,
-  onTap,
-  onReset,
-}: {
-  label: string
-  count: number
-  max: number
-  color: string
-  numeric?: boolean
-  onTap: () => void
-  onReset: () => void
-}) {
+/** 화면 정중앙에 떠있는 세로 아웃 카운트 (무채색) */
+function CenterOut() {
+  const o = useBaseballStore((s) => s.so.o)
+  const tickCount = useBaseballStore((s) => s.tickCount)
+  const setCount = useBaseballStore((s) => s.setCount)
+  const showOut = useSettingsStore((s) => s.baseball.showOut)
+  if (!showOut) return null
+
   return (
-    <div className="bb-count-row">
-      <button type="button" className="bb-count-btn" onClick={onTap}>
-        <span className="bb-count-label">{label}</span>
-        {numeric ? (
-          <span className="bb-count-number" style={{ color }}>
-            {count}
-          </span>
-        ) : (
-          <span className="bb-count-dots">
-            {Array.from({ length: max }, (_, i) => (
-              <span
-                key={i}
-                className={`bb-count-dot ${i < count ? 'on' : ''}`}
-                style={
-                  i < count ? { background: color, borderColor: color } : undefined
-                }
-              />
-            ))}
-          </span>
-        )}
+    <div className="bb-out-pill" onClick={(e) => e.stopPropagation()}>
+      <span className="bb-out-label">OUT</span>
+      <button
+        type="button"
+        className="bb-out-dots"
+        onClick={() => {
+          if (tickCount('o') === 'out') playOut()
+        }}
+        aria-label="아웃 추가"
+      >
+        {[0, 1, 2].map((i) => (
+          <span key={i} className={`bb-out-dot ${i < o ? 'on' : ''}`} />
+        ))}
       </button>
       <button
         type="button"
-        className="bb-count-reset"
-        onClick={onReset}
-        aria-label={`${label} 초기화`}
-        title="초기화"
+        className="bb-out-reset"
+        onClick={() => setCount('o', 0)}
+        title="아웃 초기화"
+        aria-label="아웃 초기화"
       >
         ↺
       </button>
@@ -126,67 +99,75 @@ function CountButton({
   )
 }
 
-type CountKey = 's' | 'b' | 'o' | 'f'
+type SbfKey = 's' | 'b' | 'f'
 
-const COUNT_DEFS: Record<
-  CountKey,
-  { label: string; max: number; color: string; numeric: boolean }
-> = {
-  s: { label: 'S', max: 3, color: '#f9a825', numeric: false },
-  b: { label: 'B', max: 4, color: '#43a047', numeric: false },
-  o: { label: 'O', max: 3, color: '#e53935', numeric: false },
-  f: { label: 'F', max: 4, color: '#42a5f5', numeric: true },
-}
-
-function CountControl({
-  keys,
-  className,
-}: {
-  keys: CountKey[]
-  className?: string
-}) {
+/** 하단 슬림 스트립: 스트라이크 · 볼 · 파울 */
+function BottomCounts() {
   const so = useBaseballStore((s) => s.so)
   const tickCount = useBaseballStore((s) => s.tickCount)
   const setCount = useBaseballStore((s) => s.setCount)
   const bb = useSettingsStore((s) => s.baseball)
 
-  const sounds = { s: playStrike, b: playBall, o: playOut, f: playFoul }
-  const shown: Record<CountKey, boolean> = {
-    s: bb.showStrike,
-    b: bb.showBall,
-    o: bb.showOut,
-    f: bb.showFoul,
+  const sounds: Record<SbfKey, () => void> = {
+    s: playStrike,
+    b: playBall,
+    f: playFoul,
   }
+  const defs = [
+    { k: 's' as const, label: 'S', max: 3, color: '#f9a825', numeric: false, show: bb.showStrike },
+    { k: 'b' as const, label: 'B', max: 4, color: '#43a047', numeric: false, show: bb.showBall },
+    { k: 'f' as const, label: 'F', max: 4, color: '#42a5f5', numeric: true, show: bb.showFoul },
+  ].filter((d) => d.show)
 
-  const rows = keys.filter((k) => shown[k])
-  if (rows.length === 0) return null
-
+  // 칩이 없어도(예: 발야구) 빈 영역을 유지해 기록·경기초기화를 오른쪽에 고정
   return (
-    <div
-      className={`bb-counts ${className ?? ''}`}
-      onClick={(e) => e.stopPropagation()}
-    >
-      {rows.map((k) => {
-        const def = COUNT_DEFS[k]
-        return (
-          <CountButton
-            key={k}
-            label={def.label}
-            count={so[k]}
-            max={def.max}
-            color={def.color}
-            numeric={def.numeric}
-            onTap={() => {
-              const res = tickCount(k)
-              if (res === 'fill') sounds[k]()
-              else if (res === 'out') sounds.o()
-              else if (res === 'walk') playWalk()
-              // 'reset'(가득 찬 아웃 도트 비우기)은 무음
+    <div className="bb-bottom-counts" onClick={(e) => e.stopPropagation()}>
+      {defs.map((d) => (
+        <div key={d.k} className="bb-chip-unit">
+          <button
+            type="button"
+            className="bb-chip"
+            onClick={() => {
+              const r = tickCount(d.k)
+              if (r === 'fill') sounds[d.k]()
+              else if (r === 'out') playOut()
+              else if (r === 'walk') playWalk()
             }}
-            onReset={() => setCount(k, 0)}
-          />
-        )
-      })}
+          >
+            <span className="bb-chip-label" style={{ color: d.color }}>
+              {d.label}
+            </span>
+            {d.numeric ? (
+              <span className="bb-chip-num" style={{ color: d.color }}>
+                {so[d.k]}
+              </span>
+            ) : (
+              <span className="bb-chip-dots">
+                {Array.from({ length: d.max }, (_, i) => (
+                  <span
+                    key={i}
+                    className="bb-chip-dot"
+                    style={
+                      i < so[d.k]
+                        ? { background: d.color, borderColor: d.color }
+                        : undefined
+                    }
+                  />
+                ))}
+              </span>
+            )}
+          </button>
+          <button
+            type="button"
+            className="bb-chip-reset"
+            onClick={() => setCount(d.k, 0)}
+            title={`${d.label} 초기화`}
+            aria-label={`${d.label} 초기화`}
+          >
+            ↺
+          </button>
+        </div>
+      ))}
     </div>
   )
 }
@@ -265,21 +246,10 @@ export function BaseballTab() {
         <TeamHalf key={rightTeam} team={rightTeam} side="right" />
       </div>
 
-      {/* 일반 탭과 동일한 위치(하단 중앙) 초기화 버튼 */}
-      {phase === 'playing' && (
-        <button
-          type="button"
-          className="general-reset bb-reset-float"
-          onClick={() => {
-            if (confirm('경기를 초기화할까요?')) reset()
-          }}
-          aria-label="경기 초기화"
-        >
-          ↺ 초기화
-        </button>
-      )}
+      {/* 중앙 플로팅 아웃 카운트 */}
+      {phase === 'playing' && <CenterOut />}
 
-      {/* 하단 컨트롤 바 */}
+      {/* 하단 통합 바: S·B·F 카운트 + 공수전환 + 기록 + 초기화 */}
       {phase === 'playing' && (
         <div className="bb-controlbar">
           <button
@@ -289,8 +259,22 @@ export function BaseballTab() {
           >
             ⇄ 공수 전환
           </button>
+          <BottomCounts />
           <button className="bb-big-btn record" onClick={() => setShowRecord(true)}>
-            📋 기록 보기
+            📋 기록
+          </button>
+          <button
+            type="button"
+            className="bb-big-btn ctl-reset"
+            onClick={() => {
+              if (confirm('경기를 초기화할까요?')) reset()
+            }}
+            aria-label="경기 초기화"
+            title="경기 초기화"
+          >
+            경기
+            <br />
+            초기화
           </button>
         </div>
       )}

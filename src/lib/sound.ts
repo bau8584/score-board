@@ -94,6 +94,14 @@ export function playWalk() {
   note(880, 0.12, 0.18, 'sine', 0.3) // A5
 }
 
+/** 타이머 종료: 주의를 끄는 반복 알람 (삐- 삐- 삐-) */
+export function playTimeUp() {
+  for (let i = 0; i < 4; i++) {
+    note(988, i * 0.32, 0.18, 'square', 0.3) // B5
+    note(988, i * 0.32 + 0.16, 0.001, 'square', 0.0001) // 짧은 간격
+  }
+}
+
 /** 아웃: 묵직하게 내려가는 3음 모티프 (가장 강조) */
 export function playOut() {
   note(440, 0, 0.14, 'sawtooth', 0.32) // A4

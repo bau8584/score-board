@@ -18,20 +18,25 @@ interface BaseballDisplay {
 
 interface TimerConfig {
   enabled: boolean
-  mode: 'up' | 'down'
+  mode: 'up' | 'down' | 'clock'
   minutes: number
+  seconds: number
 }
+
+export type Theme = 'dark' | 'light'
 
 interface SettingsState {
   teamA: TeamConfig
   teamB: TeamConfig
   timer: TimerConfig
   baseball: BaseballDisplay
+  theme: Theme
   setColor: (team: Team, color: string) => void
   setCustomName: (team: Team, name: string) => void
   setTimer: (patch: Partial<TimerConfig>) => void
   setBaseball: (patch: Partial<BaseballDisplay>) => void
   baseballPreset: (preset: 'baseball' | 'kickball') => void
+  setTheme: (theme: Theme) => void
   /** customName 우선, 없으면 색상 기반 자동명 */
   teamName: (team: Team) => string
 }
@@ -41,8 +46,9 @@ export const useSettingsStore = create<SettingsState>()(
     (set, get) => ({
       teamA: { color: '빨강', customName: '' },
       teamB: { color: '파랑', customName: '' },
-      timer: { enabled: false, mode: 'up', minutes: 10 },
+      timer: { enabled: false, mode: 'up', minutes: 10, seconds: 0 },
       baseball: { showStrike: true, showBall: true, showOut: true, showFoul: true },
+      theme: 'dark',
 
       setColor: (team, color) =>
         set((s) => ({
@@ -63,6 +69,8 @@ export const useSettingsStore = create<SettingsState>()(
       setTimer: (patch) => set((s) => ({ timer: { ...s.timer, ...patch } })),
 
       setBaseball: (patch) => set((s) => ({ baseball: { ...s.baseball, ...patch } })),
+
+      setTheme: (theme) => set({ theme }),
 
       baseballPreset: (preset) =>
         set(() => ({

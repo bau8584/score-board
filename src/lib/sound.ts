@@ -102,6 +102,17 @@ export function playTimeUp() {
   }
 }
 
+/** 카운트다운 경고(30초~): 짧은 중간 톤 비프 */
+export function playWarn() {
+  note(660, 0, 0.12, 'sine', 0.22) // E5
+}
+
+/** 카운트다운 긴박(10초~): 높고 날카로운 더블 비프 */
+export function playUrgent() {
+  note(1046.5, 0, 0.09, 'square', 0.28) // C6
+  note(1046.5, 0.12, 0.09, 'square', 0.28)
+}
+
 /** 아웃: 묵직하게 내려가는 3음 모티프 (가장 강조) */
 export function playOut() {
   note(440, 0, 0.14, 'sawtooth', 0.32) // A4

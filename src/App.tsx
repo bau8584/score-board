@@ -1,6 +1,7 @@
 import { useState, useEffect, type ComponentType } from 'react'
 import { GeneralBoard } from './components/general/GeneralBoard'
 import { BaseballTab } from './components/baseball/BaseballTab'
+import { KinballBoard } from './components/kinball/KinballBoard'
 import { SettingsPanel } from './components/settings/SettingsPanel'
 import { useUiStore, MODES, type ModeKey } from './stores/uiStore'
 import { useSettingsStore } from './stores/settingsStore'
@@ -8,6 +9,7 @@ import { useSettingsStore } from './stores/settingsStore'
 const BOARDS: Record<ModeKey, ComponentType> = {
   general: GeneralBoard,
   baseball: BaseballTab,
+  kinball: KinballBoard,
 }
 
 export default function App() {

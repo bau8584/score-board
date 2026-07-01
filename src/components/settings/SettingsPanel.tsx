@@ -32,15 +32,14 @@ function TeamSettings({ team }: { team: Team }) {
   )
 }
 
-function TimerSettings() {
+function TimerFields() {
   const timer = useSettingsStore((s) => s.timer)
   const setTimer = useSettingsStore((s) => s.setTimer)
 
   return (
-    <div className="settings-card">
-      <h3>타이머</h3>
+    <>
       <div className="row">
-        <span>사용</span>
+        <span>타이머 사용</span>
         <Toggle checked={timer.enabled} onChange={(v) => setTimer({ enabled: v })} />
       </div>
       {timer.enabled && (
@@ -100,7 +99,7 @@ function TimerSettings() {
           )}
         </>
       )}
-    </div>
+    </>
   )
 }
 
@@ -132,6 +131,87 @@ function BaseballSettings() {
           />
         </div>
       ))}
+    </div>
+  )
+}
+
+function GeneralSettings() {
+  const setCounter = useSettingsStore((s) => s.setCounter)
+  const setSetCounter = useSettingsStore((s) => s.setSetCounter)
+
+  return (
+    <div className="settings-card">
+      <h3>일반 점수판</h3>
+      <div className="row">
+        <span>세트 카운터</span>
+        <Toggle checked={setCounter} onChange={setSetCounter} />
+      </div>
+      <div className="card-divider" />
+      <TimerFields />
+    </div>
+  )
+}
+
+function KinballSettings() {
+  const kin = useSettingsStore((s) => s.kinball)
+  const setKinball = useSettingsStore((s) => s.setKinball)
+  const numOr = (v: string, min: number) =>
+    Math.max(min, Math.floor(Number(v)) || 0)
+
+  return (
+    <div className="settings-card">
+      <h3>킨볼</h3>
+      <div className="row">
+        <span>점수제 목표 점수</span>
+        <input
+          className="num-input"
+          type="number"
+          min={1}
+          value={kin.target}
+          onChange={(e) => setKinball({ target: numOr(e.target.value, 1) })}
+        />
+      </div>
+      <div className="row">
+        <span>시간제 제한</span>
+        <div className="time-inputs">
+          <input
+            className="num-input"
+            type="number"
+            min={0}
+            value={kin.timeMinutes}
+            onChange={(e) => setKinball({ timeMinutes: numOr(e.target.value, 0) })}
+          />
+          <span className="time-unit">분</span>
+          <input
+            className="num-input"
+            type="number"
+            min={0}
+            max={59}
+            value={kin.timeSeconds ?? 0}
+            onChange={(e) =>
+              setKinball({ timeSeconds: Math.min(59, numOr(e.target.value, 0)) })
+            }
+          />
+          <span className="time-unit">초</span>
+        </div>
+      </div>
+      <div className="row">
+        <span>세트 선승(판)</span>
+        <input
+          className="num-input"
+          type="number"
+          min={1}
+          value={kin.setsToWin}
+          onChange={(e) => setKinball({ setsToWin: numOr(e.target.value, 1) })}
+        />
+      </div>
+      <div className="row">
+        <span>시간제 알림음</span>
+        <Toggle
+          checked={kin.sound ?? true}
+          onChange={(v) => setKinball({ sound: v })}
+        />
+      </div>
     </div>
   )
 }
@@ -177,8 +257,9 @@ export function SettingsPanel() {
       <div className="settings-grid">
         <TeamSettings team="a" />
         <TeamSettings team="b" />
-        <TimerSettings />
+        <GeneralSettings />
         <BaseballSettings />
+        <KinballSettings />
         <ThemeSettings />
       </div>
       <div className="settings-card">

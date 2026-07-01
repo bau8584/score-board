@@ -231,7 +231,20 @@ button {
 .settings-modal-body {
   flex: 1 1 auto;
   min-height: 0;
-  overflow: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 모달 안에서는 패널이 높이를 강제하지 않고 내용만큼 늘어남 → 모달 바디가 스크롤 */
+.settings-modal .settings-panel {
+  height: auto;
+  overflow: visible;
+}
+
+.card-divider {
+  height: 1px;
+  margin: 14px 0;
+  background: var(--border);
 }
 
 .placeholder {
@@ -857,6 +870,323 @@ button {
 
 .minus-btn:active {
   background: rgba(0, 0, 0, 0.45);
+}
+
+/* ===== 킨볼 모드 (3팀) ===== */
+.kin-board {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+.kin-areas {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.kin-area {
+  position: relative;
+  flex: 1 1 33.333%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  /* 상단 컨트롤(가운데)이 팀 이름을 가리지 않도록 위쪽 여백 확보 */
+  padding: clamp(84px, 14vh, 108px) 0 150px;
+  overflow: hidden;
+}
+
+.kin-name {
+  font-size: clamp(1.6rem, 4vw, 3rem);
+  font-weight: 800;
+}
+
+/* 세트 획득 현황: 점수 아래 큰 흰 점(채움=획득) */
+.kin-pips {
+  display: flex;
+  gap: clamp(12px, 1.6vw, 18px);
+  margin-bottom: 12px;
+}
+
+.kin-pip {
+  width: clamp(26px, 3.2vw, 42px);
+  height: clamp(26px, 3.2vw, 42px);
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.75);
+  background: transparent;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.kin-pip.on {
+  background: #fff;
+  border-color: #fff;
+}
+
+.kin-score {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(14rem, 44vw, 48rem);
+  font-weight: 900;
+  line-height: 0.66;
+  font-variant-numeric: tabular-nums;
+  margin-top: 48px;
+  /* 가로로 홀쭉하게 눌러 세로 공간을 더 채움 */
+  transform: scaleX(0.62);
+  transform-origin: center;
+}
+
+.kin-btns {
+  position: absolute;
+  bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0.55;
+}
+
+/* 세부 조절 버튼: 리퀴드 글래스, 차분하게 (자주 안 씀) */
+.kin-adj {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-size: 1.6rem;
+  line-height: 1;
+  backdrop-filter: blur(8px) saturate(140%);
+  -webkit-backdrop-filter: blur(8px) saturate(140%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kin-adj:active {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+/* 상단 중앙 컨트롤 — Dynamic Island 스타일(은은한 리퀴드 글래스) */
+.kin-top {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border-radius: 999px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--glass-text);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  box-shadow: var(--glass-shadow), var(--glass-sheen);
+}
+
+.kin-seg {
+  margin: 0;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgba(127, 127, 127, 0.12);
+}
+
+.kin-top .kin-seg button {
+  min-height: 44px;
+  padding: 0 18px;
+  font-size: 1.05rem;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-dim);
+}
+
+.kin-top .kin-seg button.active {
+  background: rgba(255, 255, 255, 0.18);
+  color: var(--text);
+  border: none;
+}
+
+.kin-format {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-dim);
+  padding: 0 10px 0 6px;
+  white-space: nowrap;
+}
+
+.kin-format strong {
+  color: var(--text);
+  font-size: 1.15rem;
+}
+
+/* 우상단 초기화 아이콘 (설정 톱니바퀴 왼쪽) */
+.kin-reset-top {
+  right: 82px;
+  width: 56px;
+  font-size: 1.7rem;
+  line-height: 1;
+  padding: 0;
+}
+
+.kin-timer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-right: 6px;
+}
+
+.kin-time {
+  font-size: 1.8rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  min-width: 82px;
+  text-align: center;
+}
+
+.kin-time.done {
+  color: var(--danger);
+}
+
+.kin-timer-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-size: 1.2rem;
+}
+
+.kin-timer-btn.ghost {
+  background: rgba(127, 127, 127, 0.2);
+  color: var(--text);
+}
+
+.kin-reset {
+  z-index: 12;
+}
+
+/* 승리 팝업 */
+.kin-win-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 5, 9, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.kin-win {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 34px 40px;
+  border-radius: 24px;
+  background: var(--glass-bg-strong);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  box-shadow: var(--glass-shadow), var(--glass-sheen);
+}
+
+.kin-win-text {
+  margin: 0;
+  font-size: 2.6rem;
+  font-weight: 900;
+  color: var(--text);
+}
+
+.kin-win-score {
+  margin: 0;
+  font-size: 1.2rem;
+  color: var(--text-dim);
+}
+
+.kin-win-ok {
+  min-width: 180px;
+  min-height: 64px;
+  border: none;
+  border-radius: 16px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+
+/* ===== 일반 점수판 세트 카운터 (중앙 플로팅) ===== */
+.set-counter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 30px 16px;
+  border-radius: 24px;
+  background: var(--glass-bg-strong);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  box-shadow: var(--glass-shadow), var(--glass-sheen);
+}
+
+.set-label {
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--text);
+}
+
+.set-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.set-num {
+  border: none;
+  background: transparent;
+  font-size: 4rem;
+  font-weight: 900;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  min-width: 60px;
+  text-align: center;
+  padding: 2px 6px;
+}
+
+.set-colon {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: var(--text-dim);
+}
+
+.set-reset {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: rgba(127, 127, 127, 0.16);
+  color: var(--text-dim);
+  font-size: 1.1rem;
+  line-height: 1;
 }
 
 .general-reset {

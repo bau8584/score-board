@@ -40,8 +40,60 @@ function TeamHalf({ team }: { team: Team }) {
   )
 }
 
+function SetCounter() {
+  const sets = useGeneralStore((s) => s.sets)
+  const incSet = useGeneralStore((s) => s.incSet)
+  const decSet = useGeneralStore((s) => s.decSet)
+  const resetSets = useGeneralStore((s) => s.resetSets)
+  const colorA = useSettingsStore((s) => colorHex(s.teamA.color))
+  const colorB = useSettingsStore((s) => colorHex(s.teamB.color))
+
+  return (
+    <div className="set-counter" onClick={(e) => e.stopPropagation()}>
+      <span className="set-label">세트</span>
+      <div className="set-row">
+        <button
+          type="button"
+          className="set-num"
+          style={{ color: colorA }}
+          onClick={() => incSet('a')}
+          onContextMenu={(e) => {
+            e.preventDefault()
+            decSet('a')
+          }}
+        >
+          {sets.a}
+        </button>
+        <span className="set-colon">:</span>
+        <button
+          type="button"
+          className="set-num"
+          style={{ color: colorB }}
+          onClick={() => incSet('b')}
+          onContextMenu={(e) => {
+            e.preventDefault()
+            decSet('b')
+          }}
+        >
+          {sets.b}
+        </button>
+      </div>
+      <button
+        type="button"
+        className="set-reset"
+        onClick={resetSets}
+        aria-label="세트 초기화"
+        title="세트 초기화"
+      >
+        ↺
+      </button>
+    </div>
+  )
+}
+
 export function GeneralBoard() {
   const timerEnabled = useSettingsStore((s) => s.timer.enabled)
+  const setCounter = useSettingsStore((s) => s.setCounter)
   const reset = useGeneralStore((s) => s.reset)
 
   return (
@@ -49,6 +101,7 @@ export function GeneralBoard() {
       {timerEnabled && <TimerPill />}
       <TeamHalf team="a" />
       <TeamHalf team="b" />
+      {setCounter && <SetCounter />}
       <button
         type="button"
         className="general-reset"

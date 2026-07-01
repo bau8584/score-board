@@ -5,6 +5,7 @@ import { persist } from 'zustand/middleware'
 export const MODES = [
   { key: 'general', label: '일반' },
   { key: 'baseball', label: '야구' },
+  { key: 'kinball', label: '킨볼' },
 ] as const
 
 export type ModeKey = (typeof MODES)[number]['key']

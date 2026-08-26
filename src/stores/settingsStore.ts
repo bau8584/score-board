@@ -31,6 +31,10 @@ interface KinballConfig {
   sound: boolean // 시간제 카운트다운 알림음
 }
 
+interface CurlingConfig {
+  ends: number // 총 엔드 수
+}
+
 export type Theme = 'dark' | 'light'
 
 interface SettingsState {
@@ -39,6 +43,7 @@ interface SettingsState {
   timer: TimerConfig
   baseball: BaseballDisplay
   kinball: KinballConfig
+  curling: CurlingConfig
   theme: Theme
   /** 일반 점수판 세트 카운터 표시 */
   setCounter: boolean
@@ -48,6 +53,7 @@ interface SettingsState {
   setBaseball: (patch: Partial<BaseballDisplay>) => void
   baseballPreset: (preset: 'baseball' | 'kickball') => void
   setKinball: (patch: Partial<KinballConfig>) => void
+  setCurling: (patch: Partial<CurlingConfig>) => void
   setTheme: (theme: Theme) => void
   setSetCounter: (v: boolean) => void
   /** customName 우선, 없으면 색상 기반 자동명 */
@@ -68,6 +74,7 @@ export const useSettingsStore = create<SettingsState>()(
         setsToWin: 3,
         sound: true,
       },
+      curling: { ends: 6 },
       theme: 'dark',
       setCounter: false,
 
@@ -92,6 +99,8 @@ export const useSettingsStore = create<SettingsState>()(
       setBaseball: (patch) => set((s) => ({ baseball: { ...s.baseball, ...patch } })),
 
       setKinball: (patch) => set((s) => ({ kinball: { ...s.kinball, ...patch } })),
+
+      setCurling: (patch) => set((s) => ({ curling: { ...s.curling, ...patch } })),
 
       setTheme: (theme) => set({ theme }),
 

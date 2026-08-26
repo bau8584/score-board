@@ -216,6 +216,31 @@ function KinballSettings() {
   )
 }
 
+function CurlingSettings() {
+  const ends = useSettingsStore((s) => s.curling?.ends ?? 6)
+  const setCurling = useSettingsStore((s) => s.setCurling)
+
+  return (
+    <div className="settings-card">
+      <h3>컬링</h3>
+      <div className="row">
+        <span>엔드 수</span>
+        <div className="seg">
+          {[4, 6, 8, 10].map((n) => (
+            <button
+              key={n}
+              className={ends === n ? 'active' : ''}
+              onClick={() => setCurling({ ends: n })}
+            >
+              {n}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function ThemeSettings() {
   const theme = useSettingsStore((s) => s.theme)
   const setTheme = useSettingsStore((s) => s.setTheme)
@@ -260,6 +285,7 @@ export function SettingsPanel() {
         <GeneralSettings />
         <BaseballSettings />
         <KinballSettings />
+        <CurlingSettings />
         <ThemeSettings />
       </div>
       <div className="settings-card">

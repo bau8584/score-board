@@ -225,6 +225,24 @@ function CurlingSettings() {
       <h3>컬링</h3>
       <div className="row">
         <span>엔드 수</span>
+        <div className="stepper">
+          <button
+            aria-label="엔드 수 감소"
+            onClick={() => setCurling({ ends: Math.max(1, ends - 1) })}
+          >
+            −
+          </button>
+          <span className="stepper-val">{ends}</span>
+          <button
+            aria-label="엔드 수 증가"
+            onClick={() => setCurling({ ends: Math.min(20, ends + 1) })}
+          >
+            +
+          </button>
+        </div>
+      </div>
+      <div className="row">
+        <span>빠른 선택</span>
         <div className="seg">
           {[4, 6, 8, 10].map((n) => (
             <button

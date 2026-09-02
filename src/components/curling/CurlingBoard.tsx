@@ -50,7 +50,9 @@ export function CurlingBoard() {
           >
             <div className="curl-name">
               {t.name}
-              {hammer === t.key && <span className="curl-hammer">🔨</span>}
+              <span className="curl-order">
+                {hammer === t.key ? '🔨 후공' : '선공'}
+              </span>
             </div>
             <div className="curl-total">{t.total}</div>
           </div>
@@ -66,7 +68,7 @@ export function CurlingBoard() {
           blank()
           playMinus()
         }}>
-          블랭크 엔드
+          무승부
         </button>
         <button type="button" className="curl-btn" onClick={() => {
           undo()
@@ -79,7 +81,7 @@ export function CurlingBoard() {
           className="curl-btn"
           onClick={() => setHammer(hammer === 'a' ? 'b' : 'a')}
         >
-          🔨 해머 변경
+          🔨 선공/후공 변경
         </button>
         <button
           type="button"
@@ -110,7 +112,7 @@ export function CurlingBoard() {
                   const isCur = !done && i === ends.length
                   return (
                     <td key={i} className={isCur ? 'current' : ''}>
-                      {e ? (e.team === t.key ? e.n : e.team === null ? 'X' : 0) : ''}
+                      {e ? (e.team === t.key ? e.n : e.team === null ? '–' : 0) : ''}
                     </td>
                   )
                 })}

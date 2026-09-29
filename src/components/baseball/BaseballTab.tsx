@@ -221,6 +221,7 @@ export function BaseballTab() {
 
   // 아웃 3개 도달 시 공수 전환 확인 팝업
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- 스토어 값(아웃 수)에 반응해 팝업을 여는 의도된 동작
     if (phase === 'playing' && showOut && outs >= 3) setAskSwitch(true)
   }, [outs, showOut, phase])
 

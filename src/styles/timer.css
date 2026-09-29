@@ -1,0 +1,123 @@
+/* ===== Timer pill (dynamic island) ===== */
+.pill {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 28px;
+  background: var(--glass-bg-strong);
+  border: 1px solid var(--glass-border);
+  color: var(--glass-text);
+  border-radius: 28px;
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  box-shadow: var(--glass-shadow), var(--glass-sheen);
+  transition: padding 0.18s ease, background 0.18s ease;
+}
+
+.pill.clock {
+  padding: 10px 28px;
+}
+
+.pill.expanded {
+  padding: 14px 28px 16px;
+}
+
+.pill-time {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-size: 3.2rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  padding: 0;
+}
+
+.pill-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.pill-action {
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.5rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pill-action.ghost {
+  background: rgba(127, 127, 127, 0.18);
+  color: var(--text);
+}
+
+.pill.finished {
+  animation: pill-flash 0.7s steps(1) infinite;
+}
+
+@keyframes pill-flash {
+  50% {
+    background: var(--danger);
+    border-color: var(--danger);
+  }
+}
+
+/* ===== 타이머 종료 팝업 ===== */
+.timer-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 5, 9, 0.55);
+  backdrop-filter: blur(4px);
+}
+
+.timer-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  min-width: 320px;
+  padding: 32px 28px;
+  border-radius: 24px;
+  background: var(--glass-bg-strong);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  box-shadow: var(--glass-shadow), var(--glass-sheen);
+}
+
+.timer-modal-text {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--text);
+}
+
+.timer-modal-ok {
+  min-width: 160px;
+  min-height: 64px;
+  border: none;
+  border-radius: 16px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+

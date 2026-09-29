@@ -6,6 +6,7 @@ import { CurlingBoard } from './components/curling/CurlingBoard'
 import { SettingsPanel } from './components/settings/SettingsPanel'
 import { useUiStore, MODES, type ModeKey } from './stores/uiStore'
 import { useSettingsStore } from './stores/settingsStore'
+import { useWakeLock } from './hooks/useWakeLock'
 
 const BOARDS: Record<ModeKey, ComponentType> = {
   general: GeneralBoard,
@@ -20,6 +21,8 @@ export default function App() {
   const theme = useSettingsStore((s) => s.theme)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [modeOpen, setModeOpen] = useState(false)
+
+  useWakeLock()
 
   // 테마를 document에 반영
   useEffect(() => {

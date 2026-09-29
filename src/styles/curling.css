@@ -1,0 +1,111 @@
+/* ── 컬링 ───────────────────────────────────────── */
+.curl-board {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 8px;
+  padding: 8px;
+}
+
+.curl-halves {
+  display: flex;
+  gap: 8px;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.curl-half {
+  flex: 1 1 50%;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  cursor: pointer;
+  user-select: none;
+  min-height: 60px;
+}
+
+.curl-name {
+  font-size: clamp(1.8rem, 4.5vw, 3.2rem);
+  font-weight: 700;
+  opacity: 0.92;
+}
+
+.curl-order {
+  margin-left: 10px;
+  font-size: 0.62em;
+  font-weight: 700;
+  opacity: 0.9;
+  white-space: nowrap;
+}
+
+.curl-total {
+  font-size: clamp(7rem, 34vh, 24rem);
+  font-weight: 900;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.curl-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.curl-endlabel {
+  font-size: 1.4rem;
+  font-weight: 800;
+  padding: 0 12px;
+  color: var(--text);
+}
+
+.curl-btn {
+  flex: 1 1 0;
+  min-height: 60px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.curl-btn.danger {
+  color: #ff6b6b;
+}
+
+.curl-btn:active {
+  filter: brightness(1.3);
+}
+
+.curl-record {
+  flex: 0 0 auto;
+  max-height: 26vh;
+  overflow-y: auto;
+}
+
+.curl-pad {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.curl-pad-btn {
+  min-height: 64px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text);
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.curl-pad-btn:active {
+  background: var(--accent);
+  color: #fff;
+}
+

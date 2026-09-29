@@ -1,0 +1,544 @@
+/* ===== Baseball board (general-style) ===== */
+.bb-board {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.bb-top-pill {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  padding: 8px 22px;
+  border-radius: 999px;
+  background: var(--glass-bg-strong);
+  border: 1px solid var(--glass-border);
+  color: var(--glass-text);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  box-shadow: var(--glass-shadow), var(--glass-sheen);
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.bb-halves {
+  flex: 1 1 auto;
+  display: flex;
+  width: 100%;
+  min-height: 0;
+}
+
+.bb-halves .team-half {
+  transition: box-shadow 0.15s ease;
+  /* 하단 플로팅 컨트롤바 공간 확보 (점수는 그 위 영역 중앙 정렬) */
+  padding-bottom: 150px;
+}
+
+.bb-halves .bb-attacking {
+  box-shadow: inset 0 0 0 6px rgba(255, 255, 255, 0.85);
+}
+
+/* 야구 점수도 일반 점수판처럼 크게 (컨트롤이 플로팅이라 공간 여유) */
+.bb-halves .team-score {
+  font-size: clamp(9rem, 32vw, 30rem);
+}
+
+/* ===== 중앙 플로팅 아웃 (무채색) ===== */
+.bb-out-pill {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 12;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 14px;
+  border-radius: 999px;
+  background: var(--glass-bg-strong);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  box-shadow: var(--glass-shadow), var(--glass-sheen);
+}
+
+.bb-out-label {
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+}
+
+.bb-out-dots {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border: none;
+  background: transparent;
+  padding: 0;
+}
+
+.bb-out-dot {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 2px solid var(--text-dim);
+  background: transparent;
+  transition: background 0.1s ease, border-color 0.1s ease;
+}
+
+.bb-out-dot.on {
+  background: var(--text);
+  border-color: var(--text);
+}
+
+.bb-out-reset {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: rgba(127, 127, 127, 0.14);
+  color: var(--text-dim);
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+/* ===== 하단 통합 바 안의 S · B · F 칩 그룹 (가운데, 가장 넓게) ===== */
+.bb-bottom-counts {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+}
+
+/* 칩 1개 단위 = 한 박스 안에 카운트 버튼 + 개별 초기화 */
+.bb-chip-unit {
+  flex: 1 1 0;
+  display: flex;
+  align-items: stretch;
+  min-height: 92px;
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  background: var(--glass-bg);
+  box-shadow: var(--glass-sheen);
+  overflow: hidden;
+}
+
+.bb-chip {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 0 4px;
+  border: none;
+  background: transparent;
+}
+
+.bb-chip-label {
+  font-size: 2.5rem;
+  font-weight: 900;
+}
+
+.bb-chip-dots {
+  display: flex;
+  gap: 9px;
+}
+
+.bb-chip-dot {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 3px solid var(--text-dim);
+  background: transparent;
+}
+
+.bb-chip-num {
+  font-size: 2.5rem;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  min-width: 40px;
+  text-align: center;
+}
+
+.bb-chip-reset {
+  flex: 0 0 auto;
+  width: 40px;
+  border: none;
+  border-left: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-dim);
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.bb-chip-reset:active {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* bottom control bar */
+/* 하단 플로팅 컨트롤 바 (검은 영역 제거, 점수판 위에 떠있음) */
+.bb-controlbar {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 20px);
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 24px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  box-shadow: var(--glass-shadow), var(--glass-sheen);
+  z-index: 20;
+}
+
+.bb-big-btn {
+  flex: 1;
+  min-height: 76px;
+  border: none;
+  border-radius: 16px;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.bb-big-btn.start {
+  background: #2e7d32;
+}
+
+.bb-big-btn.switch {
+  flex: 0 0 auto;
+  min-width: 212px;
+  padding: 0 16px;
+  font-size: 1.3rem;
+  background: var(--accent);
+}
+
+.bb-big-btn.record {
+  flex: 0 0 auto;
+  min-width: 150px;
+  padding: 0 14px;
+  font-size: 1.25rem;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-sheen);
+  color: var(--text);
+}
+
+.bb-big-btn.ctl-reset {
+  flex: 0 0 auto;
+  min-width: 158px;
+  padding: 0 12px;
+  font-size: 1.15rem;
+  line-height: 1.15;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-sheen);
+  color: var(--text);
+}
+
+/* 수비 팀: 탭 불가 표시 */
+.bb-halves .bb-defending {
+  cursor: default;
+}
+
+.bb-halves .bb-defending::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.28);
+  pointer-events: none;
+}
+
+/* start overlay: 선공 팀 선택 */
+.bb-start-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  background: rgba(5, 5, 9, 0.7);
+  backdrop-filter: blur(4px);
+  padding: 24px;
+}
+
+.bb-start-title {
+  margin: 0;
+  font-size: clamp(1.6rem, 4vw, 2.6rem);
+  font-weight: 800;
+  text-align: center;
+}
+
+.bb-start-pick {
+  display: flex;
+  gap: 24px;
+  width: 100%;
+  max-width: 720px;
+}
+
+.bb-pick-btn {
+  flex: 1;
+  min-height: 200px;
+  border: none;
+  border-radius: 24px;
+  color: #fff;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 900;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.bb-pick-sub {
+  font-size: 1.2rem;
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+/* 확인 모달 */
+.bb-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 5, 9, 0.6);
+  backdrop-filter: blur(3px);
+}
+
+.bb-modal {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px;
+  min-width: 360px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+}
+
+.bb-modal-text {
+  margin: 0 0 24px;
+  font-size: 1.6rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.bb-modal-btns {
+  display: flex;
+  gap: 14px;
+}
+
+.bb-modal-cancel,
+.bb-modal-ok {
+  flex: 1;
+  min-height: 68px;
+  border-radius: 14px;
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+
+.bb-modal-cancel {
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text);
+}
+
+.bb-modal-ok {
+  border: none;
+  background: var(--accent);
+  color: #fff;
+}
+
+/* record overlay */
+.bb-record-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+.bb-record-head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.bb-record-head h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.bb-record-head-btns {
+  display: flex;
+  gap: 10px;
+}
+
+.bb-record-reset {
+  min-height: 52px;
+  padding: 0 18px;
+  border: 1px solid var(--danger);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--danger);
+  font-weight: 700;
+}
+
+.bb-record-close {
+  min-height: 52px;
+  padding: 0 22px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel-2);
+  color: var(--text);
+  font-weight: 700;
+}
+
+.bb-record-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+}
+
+/* record table */
+.bb-record {
+  padding: 16px;
+}
+
+.record-scroll {
+  overflow-x: auto;
+}
+
+.record-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.record-table th,
+.record-table td {
+  border: 1px solid var(--border);
+  min-width: 52px;
+  height: 64px;
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.record-table th {
+  background: var(--panel-2);
+  color: var(--text-dim);
+  font-size: 1.1rem;
+}
+
+.record-table .team-col {
+  min-width: 120px;
+  text-align: left;
+  padding: 0 14px;
+  font-size: 1.2rem;
+}
+
+.record-table .total-col {
+  background: var(--panel-2);
+}
+
+.record-table td.current {
+  background: rgba(79, 140, 255, 0.25);
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.record-edit {
+  width: 100%;
+  height: 100%;
+  min-width: 44px;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-size: 1.4rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  -moz-appearance: textfield;
+}
+
+.record-edit::-webkit-outer-spin-button,
+.record-edit::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.record-edit:focus {
+  outline: 2px solid var(--accent);
+  border-radius: 6px;
+  background: rgba(79, 140, 255, 0.12);
+}
+
+.record-hint {
+  margin: 10px 2px 0;
+  color: var(--text-dim);
+  font-size: 0.95rem;
+}
+
+.event-log {
+  margin-top: 20px;
+}
+
+.event-log h4 {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+  color: var(--text-dim);
+}
+
+.event-log ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.event-log li {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.log-label {
+  font-weight: 700;
+  min-width: 70px;
+}
+
+.log-team {
+  flex: 1;
+  color: var(--text-dim);
+}
+
+.log-empty {
+  color: var(--text-dim);
+}
+

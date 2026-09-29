@@ -1,0 +1,258 @@
+:root,
+:root[data-theme='dark'] {
+  --bg: #0a0a0f;
+  --panel: #15151f;
+  --panel-2: #1e1e2b;
+  --border: #2a2a3a;
+  --text: #f2f2f7;
+  --text-dim: #9a9aac;
+  --accent: #4f8cff;
+  --danger: #e53935;
+
+  /* ===== Liquid Glass 토큰 (다크) ===== */
+  --glass-bg: rgba(30, 30, 40, 0.45);
+  --glass-bg-strong: rgba(22, 22, 30, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.18);
+  --glass-blur: 20px;
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  --glass-sheen: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  --glass-text: #f2f2f7;
+}
+
+:root[data-theme='light'] {
+  --bg: #eceef3;
+  --panel: #ffffff;
+  --panel-2: #f1f2f6;
+  --border: #d4d7e0;
+  --text: #14141a;
+  --text-dim: #6b6f7d;
+  --accent: #2f6bff;
+  --danger: #d32f2f;
+
+  /* ===== Liquid Glass 토큰 (화이트) ===== */
+  --glass-bg: rgba(255, 255, 255, 0.5);
+  --glass-bg-strong: rgba(255, 255, 255, 0.78);
+  --glass-border: rgba(255, 255, 255, 0.7);
+  --glass-blur: 20px;
+  --glass-shadow: 0 8px 32px rgba(31, 38, 66, 0.18);
+  --glass-sheen: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  --glass-text: #14141a;
+}
+
+:root {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Noto Sans KR', sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--bg);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  color: inherit;
+}
+
+/* ===== App shell ===== */
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.content {
+  flex: 1 1 auto;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ===== 떠있는 상단 버튼 (모드 전환 / 설정) ===== */
+.float-btn {
+  position: absolute;
+  top: 14px;
+  z-index: 35;
+  min-height: 52px;
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  background: var(--glass-bg);
+  color: var(--glass-text);
+  font-weight: 700;
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  box-shadow: var(--glass-shadow), var(--glass-sheen);
+}
+
+.mode-menu {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 35;
+}
+
+.float-btn.mode-switch {
+  position: static;
+  padding: 0 22px;
+  font-size: 1.2rem;
+}
+
+.mode-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 36;
+}
+
+.mode-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 37;
+  display: flex;
+  flex-direction: column;
+  min-width: 180px;
+  padding: 6px;
+  border-radius: 16px;
+  background: var(--glass-bg-strong);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  box-shadow: var(--glass-shadow), var(--glass-sheen);
+}
+
+.mode-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 56px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text);
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-align: left;
+}
+
+.mode-item.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.mode-item:not(.active):active {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.mode-check {
+  font-size: 1.1rem;
+}
+
+.float-btn.gear {
+  right: 14px;
+  width: 56px;
+  font-size: 1.7rem;
+  line-height: 1;
+  padding: 0;
+}
+
+.float-btn:active {
+  background: var(--glass-bg-strong);
+}
+
+/* ===== 설정 팝업 ===== */
+.settings-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(5, 5, 9, 0.65);
+  backdrop-filter: blur(3px);
+}
+
+.settings-modal {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 920px;
+  max-height: 88vh;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.6);
+}
+
+.settings-modal-head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.settings-modal-head h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.settings-modal-close {
+  min-height: 52px;
+  padding: 0 22px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel-2);
+  color: var(--text);
+  font-weight: 700;
+}
+
+.settings-modal-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 모달 안에서는 패널이 높이를 강제하지 않고 내용만큼 늘어남 → 모달 바디가 스크롤 */
+.settings-modal .settings-panel {
+  height: auto;
+  overflow: visible;
+}
+
+.card-divider {
+  height: 1px;
+  margin: 14px 0;
+  background: var(--border);
+}
+
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-dim);
+  font-size: 1.4rem;
+}
+

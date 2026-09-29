@@ -49,9 +49,11 @@ function CountPill({
 
   // 설정 변경 시 리셋
   useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect -- 설정 변경 시 타이머 초기화 */
     setRunning(false)
     setDone(false)
     setSeconds(startValue)
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [mode, minutes, cfgSeconds, startValue])
 
   useEffect(() => {
@@ -70,8 +72,10 @@ function CountPill({
   // 카운트다운 종료 감지 → 정지 + 소리 + 팝업
   useEffect(() => {
     if (mode === 'down' && running && seconds === 0) {
+      /* eslint-disable react-hooks/set-state-in-effect -- 카운트다운 종료 처리 */
       setRunning(false)
       setDone(true)
+      /* eslint-enable react-hooks/set-state-in-effect */
       playTimeUp()
     }
   }, [seconds, running, mode])

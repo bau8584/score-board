@@ -111,6 +111,7 @@ export function KinballBoard() {
 
   // 모드/시간 설정 변경 시 타이머 리셋
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- 설정 변경 시 타이머 초기화
     setRunning(false)
     setSeconds(totalTime)
   }, [gameMode, totalTime])
@@ -148,13 +149,16 @@ export function KinballBoard() {
   useEffect(() => {
     if (gameMode === 'score' && !result) {
       const reached = KIN_TEAMS.find((t) => scores[t.key] >= target)
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- 목표 점수 도달 시 세트 종료
       if (reached) endSet(reached.key)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- endSet은 매 렌더 새로 생성됨. 점수 변화에만 반응해야 함
   }, [scores, gameMode, result, target])
 
   // 시간제: 시간 종료 → 최고 점수 팀이 세트 획득(동점이면 무승부)
   useEffect(() => {
     if (gameMode === 'time' && running && seconds === 0 && !result) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- 시간 종료 시 정지
       setRunning(false)
       const max = Math.max(...KIN_TEAMS.map((t) => scores[t.key]))
       const leaders = KIN_TEAMS.filter((t) => scores[t.key] === max)
@@ -166,6 +170,7 @@ export function KinballBoard() {
         setResult({ label: '무승부! 다시 진행', isMatch: false })
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- endSet/resetRound는 매 렌더 새로 생성됨
   }, [seconds, running, gameMode, scores, result])
 
   const closeResult = () => {
